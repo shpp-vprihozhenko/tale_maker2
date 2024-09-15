@@ -91,6 +91,14 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
+        appBarTheme: AppBarTheme(
+          color: Colors.blue, // Set the app bar's background color
+          iconTheme: IconThemeData(color: Colors.white), // Set the icon color
+          titleTextStyle: TextStyle(
+            color: Colors.white, // Set the title text color
+            fontSize: 20,
+          ),
+        ),
       ),
       home: SelectTale(),
     );
@@ -215,6 +223,26 @@ class _MyHomePageState extends State<MyHomePage> {
 
   initTts() async {
     flutterTts = FlutterTts();
+    if (Platform.isIOS) {
+      await flutterTts.setSharedInstance(true);
+      await flutterTts.setIosAudioCategory(IosTextToSpeechAudioCategory.playback,
+          [
+            //IosTextToSpeechAudioCategoryOptions.allowBluetooth,
+            //IosTextToSpeechAudioCategoryOptions.allowBluetoothA2DP,
+            IosTextToSpeechAudioCategoryOptions.mixWithOthers,
+            //IosTextToSpeechAudioCategoryOptions.defaultToSpeaker,
+          ],
+          //IosTextToSpeechAudioMode.defaultMode
+          IosTextToSpeechAudioMode.voicePrompt
+      );
+    } else {
+      String defEng = await flutterTts.getDefaultEngine;
+      if (!defEng.contains('google')) {
+        var engines = await flutterTts.getEngines;
+        int gIdx = engines.indexWhere((element) => element.toString().contains('google'));
+        await flutterTts.setEngine(engines[gIdx]);
+      }
+    }
     await flutterTts.awaitSpeakCompletion(true);
     await flutterTts.setVolume(volume);
     await flutterTts.setSpeechRate(0.42);
@@ -281,8 +309,8 @@ class _MyHomePageState extends State<MyHomePage> {
                     duration: Duration(seconds: 2),
                     child: Container(
                       child: Scrollbar(
-                        controller: _scrollController1, // <---- Here, the controller
-                        isAlwaysShown: true,
+                        controller: _scrollController1,
+                        thumbVisibility: true,
                         child: ListView(
                           shrinkWrap: true,
                           controller: _scrollController1,
@@ -694,58 +722,80 @@ class SelectTale extends StatelessWidget {
   Widget build(BuildContext context) {
     double _tScale = 1.8;
     return Scaffold(
-      appBar: AppBar(title: Text('Выбери сказку'),),
-      body: DefaultTextStyle(
-        style: TextStyle(
-          fontSize: 22,
-          color: Colors.black
-        ),
-        child: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text('В телефоне поселился вирус.', textAlign: TextAlign.center,),
-              Text('Который иногда ломает сказки.', textAlign: TextAlign.center),
-              Text('Попробуй починить их!', textAlign: TextAlign.center),
-              Text('Или придумай новую...', textAlign: TextAlign.center),
-              SizedBox(height: 30,),
-              Text('Выбери сказку и пробуй!', textAlign: TextAlign.center),
-              SizedBox(height: 16,),
-              ElevatedButton(
-                child: Text('Курочка ряба',
-                  textScaleFactor: _tScale,
-                ),
-                onPressed: (){
-                  glBaseTale = 'kurRyaba';
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => MyHomePage()),);
-                },
+      appBar: AppBar(title: Text('Почини сказку'),),
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: DefaultTextStyle(
+          style: TextStyle(
+            fontSize: 18,
+            color: Colors.black
+          ),
+          child: SingleChildScrollView(
+            child: Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text('В телефоне погулял вирус,', textAlign: TextAlign.center,),
+                  Text('который ломает сказки.', textAlign: TextAlign.center),
+                  Text('Надо починить их!', textAlign: TextAlign.center),
+                  Text('Или придумать свои...', textAlign: TextAlign.center),
+                  SizedBox(height: 10,),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.grey[300],
+                      borderRadius: BorderRadius.all(Radius.circular(24))
+                    ),
+                    width: double.infinity,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        SizedBox(height: 10,),
+                        Text('Выбери сказку и пробуй!', textAlign: TextAlign.center),
+                        SizedBox(height: 10,),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(backgroundColor: Colors.limeAccent),
+                          child: Text('Курочка ряба',
+                            textScaleFactor: _tScale,
+                          ),
+                          onPressed: (){
+                            glBaseTale = 'kurRyaba';
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => MyHomePage()),);
+                          },
+                        ),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(backgroundColor: Colors.limeAccent),
+                          child: Text('Где обедал воробей', textScaleFactor: _tScale),
+                          onPressed: (){
+                            glBaseTale = 'vorobey';
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => MyHomePage()),);
+                          },
+                        ),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(backgroundColor: Colors.limeAccent),
+                          child: Text('Мишка', textScaleFactor: _tScale),
+                          onPressed: (){
+                            glBaseTale = 'mishka';
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => MyHomePage()),);
+                          },
+                        ),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(backgroundColor: Colors.limeAccent),
+                          child: Text('Танечка', textScaleFactor: _tScale),
+                          onPressed: (){
+                            glBaseTale = 'tanya';
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => MyHomePage()),);
+                          },
+                        ),
+                        SizedBox(height: 10,),
+                      ],
+                    ),
+                  ),
+                  Image.asset('images/virus.png'),
+                ],
               ),
-              ElevatedButton(
-                child: Text('Где обедал воробей', textScaleFactor: _tScale),
-                onPressed: (){
-                  glBaseTale = 'vorobey';
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => MyHomePage()),);
-                },
-              ),
-              ElevatedButton(
-                child: Text('Мишка', textScaleFactor: _tScale),
-                onPressed: (){
-                  glBaseTale = 'mishka';
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => MyHomePage()),);
-                },
-              ),
-              ElevatedButton(
-                child: Text('Танечка', textScaleFactor: _tScale),
-                onPressed: (){
-                  glBaseTale = 'tanya';
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => MyHomePage()),);
-                },
-              ),
-              SizedBox(height: 10,),
-              Image.asset('images/virus.png'),
-            ],
+            ),
           ),
         ),
       ),

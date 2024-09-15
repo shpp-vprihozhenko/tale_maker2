@@ -31,7 +31,7 @@ class About extends StatelessWidget {
                 textAlign: TextAlign.center,
                 textScaleFactor: 1.3,
                 text: TextSpan(
-                  style: Theme.of(context).textTheme.bodyText2,
+                  style: Theme.of(context).textTheme.bodyMedium,
                   children: [
                     TextSpan(text: 'Я уверен, ты можешь придумать сказку намного интересней чем та, которую придумал телефон.'
                         '\n\nНажми на слово, которое хочешь заменить, и внизу появятся варианты, доступные для замены.'
@@ -81,7 +81,7 @@ class About extends StatelessWidget {
                 textAlign: TextAlign.center,
                 textScaleFactor: 1.3,
                 text: TextSpan(
-                  style: Theme.of(context).textTheme.bodyText2,
+                  style: Theme.of(context).textTheme.bodyMedium,
                   children: [
                     TextSpan(text: 'Значёк '),
                     WidgetSpan(
