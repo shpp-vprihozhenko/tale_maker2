@@ -38,9 +38,6 @@ android {
         versionCode = flutter.versionCode
         versionName = flutter.versionName
 
-        ndk {
-            abiFilters 'armeabi-v7a', 'armeabi-v7a-16k', 'x86_64'
-        }
     }
 
     signingConfigs {
