@@ -19,6 +19,7 @@ import 'dart:math';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 import 'ChooseTaleToRestore.dart';
 import 'globals.dart';
 import 'taleLib.dart';
@@ -28,7 +29,6 @@ import 'package:path_provider/path_provider.dart' as path_provider;
 import 'EditWordOptions.dart';
 import 'EnterTaleName.dart';
 import 'ChooseNewOrExist.dart';
-import 'package:share_extend/share_extend.dart';
 import 'dart:ui' as ui;
 
 enum TtsState { playing, stopped, paused, continued }
@@ -711,7 +711,15 @@ class _MyHomePageState extends State<MyHomePage> {
     ui.Image image = await boundary.toImage();
     ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
     String fileName = await _writeByteToImageFile(byteData!);
-    ShareExtend.shareMultiple([fileName], "image", subject: "Приятного аппетита!");
+    // ShareExtend.shareMultiple([fileName], "image", subject: "Приятного аппетита!");
+
+    final params = ShareParams(
+      text: '-',
+      files: [XFile(fileName)],
+    );
+
+    final result = await SharePlus.instance.share(params);
+
   }
 }
 
